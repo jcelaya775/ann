@@ -6,9 +6,6 @@ from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from joblib import Memory
 
 
-np.random.seed(42) # to ensure reproducible results
-
-
 def get_mnist(batch_size=64, random_seed=42):
     def split_into_batches(x, batch_size):
         n_batches = len(x) / batch_size
@@ -98,7 +95,7 @@ def forward(x, nn_parameters, nn_architecture):
 
         a, z = forward_single_layer(a_prev, w, b, activation_function)
 
-        memory[f"a_{i - 1}"] = a
+        memory[f"a_{i - 1}"] = a_prev
         memory[f"z_{i}"] = z
 
     return a, memory
@@ -148,8 +145,6 @@ def backward(target, prediction, memory, param_values, nn_architecture):
 
         gradients[f"dW_{i - 1}->{i}"] = dW
         gradients[f"dB_{i}"] = dB
-        print(gradients[f"dW_{i - 1}->{i}"].shape)
-        print(gradients[f"dB_{i}"])
     
     return gradients
 
