@@ -148,13 +148,9 @@ def backward(target, prediction, memory, param_values, nn_architecture):
     
     return gradients
 
-
 def update(param_values, gradients, nn_architecture, learning_rate):
     n_layers = len(nn_architecture) + 1
     for i in range(1, n_layers):
-        # print(param_values[f"weights {i - 1}->{i}"].shape)
-        # print(gradients[f"dW_{i - 1}->{i}"].shape)
-        # print((learning_rate * gradients[f"dW_{i - 1}->{i}"]).shape)
         param_values[f"weights {i - 1}->{i}"] -= (learning_rate * gradients[f"dW_{i - 1}->{i}"])
         param_values[f"bias {i}"] -= learning_rate * gradients[f"dB_{i}"].mean()
     return param_values
@@ -164,11 +160,17 @@ def get_current_accuracy(param_values, nn_architecture, x_test, y_test):
     correct = 0
     total_counter = 0
     for x, y in zip(x_test, y_test):
-        a, _ = forward(x, param_values, nn_architecture)
-        pred = np.argmax(a, axis=1)
-        y = np.argmax(y, axis=1)
-        correct += (pred == y).sum()
-        total_counter += len(x)
+        for i in range(len(x)):
+            a, _ = forward(x, param_values, nn_architecture)
+            pred = np.argmax(a, axis=1)
+            y = np.argmax(y, axis=1)
+
+            plt.imshow(x[i].reshape(28, 28))
+            plt.title(f"It's a {y[i]}. The NN thinks it's a {pred[i]}!")
+            plt.show()
+
+            correct += (pred == y).sum()
+            total_counter += len(x)
     accuracy = correct / total_counter
     return accuracy
 
@@ -179,7 +181,8 @@ def main():
         {"in": 784, "out": 16, "activation": "relu"},
         {"in": 16, "out": 10, "activation": "relu"},
     ]
-
+    
+    # Train the model
     x_train, y_train, x_test, y_test = get_mnist()
     parameters = init_weights_and_biases(neural_network)
     n_epochs = 75
