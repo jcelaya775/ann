@@ -1,3 +1,8 @@
+'''
+Credit to Artur A. Galstyan (blog: https://arturgalstyan.dev/blog/neural_network_in_numpy) for the neural network implementation.
+'''
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -160,17 +165,16 @@ def get_current_accuracy(param_values, nn_architecture, x_test, y_test):
     correct = 0
     total_counter = 0
     for x, y in zip(x_test, y_test):
-        for i in range(len(x)):
-            a, _ = forward(x, param_values, nn_architecture)
-            pred = np.argmax(a, axis=1)
-            y = np.argmax(y, axis=1)
+        a, _ = forward(x, param_values, nn_architecture)
+        pred = np.argmax(a, axis=1)
+        y = np.argmax(y, axis=1)
 
-            plt.imshow(x[i].reshape(28, 28))
-            plt.title(f"It's a {y[i]}. The NN thinks it's a {pred[i]}!")
-            plt.show()
+        # plt.imshow(x[0].reshape(28, 28))
+        # plt.title(f"It's a {y[0]}. The NN thinks it's a {pred[0]}!")
+        # plt.show()
 
-            correct += (pred == y).sum()
-            total_counter += len(x)
+        correct += (pred == y).sum()
+        total_counter += len(x)
     accuracy = correct / total_counter
     return accuracy
 
@@ -193,7 +197,7 @@ def main():
             grads = backward(y, a, memory, parameters, neural_network)
             update(parameters, grads, neural_network, learning_rate)
         accuracy = get_current_accuracy(parameters, neural_network, x_test, y_test)
-        print(f"Epoch { epoch } Accuracy = { np.round(accuracy * 100, 4) }")
+        print(f"Epoch { epoch } Accuracy = { np.round(accuracy * 100, 4) }%")
 
 
 main()
